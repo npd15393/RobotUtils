@@ -8,11 +8,12 @@ from jacob import Jacobian
  	def IterJInv(self,xf,qi):
  		if qi is None:
  			qi=np.zeros(self.J.shape[1])
- 		del=np.inf
+ 		
+ 		Jinv=np.transpose(self.J)
 
- 		while del>0.001:
- 			del=np.dot(np.transpose(J),np.dot(J,np.transpose(J)))
- 			qi+=del
+ 		while np.abs(np.dot(Jinv,qi)-xf)>0.001:
+ 			Jinv=np.dot(np.transpose(J),np.dot(J,np.transpose(J)))
+ 			qi+=Jinv
 
  		return qi
 
