@@ -3,10 +3,10 @@ from ik import IK
 
 class robot:
 	def __init__(self,name='irb120'):
-		if nameis None:
+		if name is None:
 			self.dh=[]
 			self.rho=[]
-		else:
+		elif name=='irb120':
 			IRB120()
 
 	def BuildKineModules(self):
