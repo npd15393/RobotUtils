@@ -20,7 +20,7 @@ class IK:
  			Jpinv=np.transpose(J)
  			Jg=np.dot(Jpinv,(xf-np.dot(J,qi)).reshape(6,1))
  			qi+=0.2*Jg
- 			print(np.abs(np.linalg.norm(np.dot(Jpinv,qi)-xf)))
+ 			print(np.linalg.norm(np.dot(Jpinv,qi)-xf))
  		return qi
 
  	def CCD(self,xf,qi):
