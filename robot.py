@@ -1,38 +1,51 @@
 import math as m
 from ik import IK
+from jacob import *
+import numpy as np
+import math
 
 class robot:
 	def __init__(self,name='irb120'):
-		if name is None:
-			self.dh=[]
-			self.rho=[]
-		elif name=='irb120':
-			IRB120()
+		self.dh=[]
+		self.home=[]
+		self.rho=[]
+		if name=='irb120':
+			self.IRB120()
 
 	def BuildKineModules(self):
-		assert (len(dh)>0,'No dh params found')
-		assert( len(rho)==len(dh),'Specify all joint descriptions')
+		assert (len(self.dh)>0,'No dh params found')
+		#assert( len(self.rho)==len(self.dh),'Specify all joint descriptions')
 		self.IK=IK(self)
+		print('Build Success')
 
-	def AddLink(alpha,d,a,theta,ro):
-		self.dh+=[alpha,a,d,theta]
-		self.rho+=ro
+	def AddLink(self,alpha,d,a,theta,ro):
+		self.dh+=[[alpha,d,a,theta]]
+		self.home+=[theta]
+		self.rho+=[ro]
 
 	def IRB120(self):
-		AddLink(m.pi/2,0.29,0,0)
-		AddLink(0,0,0.27,m.pi/2)
-		AddLink(m.pi/2,0,0.07,0)
-		AddLink(-m.pi/2,0.302,0)
-		AddLink(m.pi/2,0,0,0)
-		AddLink(0,0.072,0,0)
+		self.dh=[]
+		self.rho=[]
+		self.AddLink(m.pi/2,0.29,0,0,1)
+		self.AddLink(0,0,0.27,m.pi/2,1)
+		self.AddLink(m.pi/2,0,0.07,0,1)
+		self.AddLink(-m.pi/2,0.302,0,0,1)
+		self.AddLink(m.pi/2,0,0,0,1)
+		self.AddLink(0,0.072,0,m.pi,1)
 
 	def calcDH(self,q):
-		for qi in range(len(q)):
-			self.dh[qs][3]=q[qi]
+		assert (len(q)==len(self.rho))
+		for qs in range(len(q)):
+			self.dh[qs][3]=self.home[qs]
+			self.dh[qs][3]+=q[qs]
 
-	
+	def GetEffectorPosition(self,q):
+		q=[q1*math.pi/180 for q1 in q]
+		self.calcDH(q)
+		Tr=ConstructTransform(self.dh)[-1]
+		angs=ExtractOrients(Tr[0:3,0:3])
+		return np.concatenate((np.dot(Tr,np.array([0,0,0,1]))[0,0:3].reshape([3,1]),angs.reshape([3,1])),axis=0)
 
 
-
-
-
+	def SetEffectorPosition(self,xf):
+		return self.IK.IterJInv(xf)
