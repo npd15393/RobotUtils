@@ -240,14 +240,14 @@
     <dynamics damping="0.0" friction="0.0"/>
   </joint>
 
-  <link name="tool0"/>
+  <!--<link name="tool0"/>
 
   <joint name="joint6-tool0" type="fixed">
     <parent link="link_6"/>
     <child link="tool0"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 1 0"/>
-  </joint>
+  </joint>-->
 
   
   <!-- ROS base_link to ABB World Coordinates transform -->
