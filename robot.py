@@ -3,9 +3,12 @@ from ik import IK
 from jacob import *
 import numpy as np
 import math
-
+import ikpy
+import os
+ 
 class robot:
 	def __init__(self,name='irb120'):
+		self.urdf=ikpy.chain.Chain.from_urdf_file('./robot.URDF')
 		self.dh=[]
 		self.home=[]
 		self.rho=[]
@@ -15,7 +18,7 @@ class robot:
 	def BuildKineModules(self):
 		assert (len(self.dh)>0,'No dh params found')
 		#assert( len(self.rho)==len(self.dh),'Specify all joint descriptions')
-		self.IK=IK(self)
+		#self.IK=IK(self)
 		print('Build Success')
 
 	def AddLink(self,alpha,d,a,theta,ro):
@@ -23,6 +26,11 @@ class robot:
 		self.home+=[theta]
 		self.rho+=[ro]
 
+	def iterIK(self,xf,qi=None):
+ 		return (self.urdf.inverse_kinematics([[1, 0, 0, xf[0]],
+                             [0, 1, 0, xf[1]],
+                             [0, 0, 1, xf[2]],
+                             [0, 0, 0, 1]]))
 	def IRB120(self):
 		self.dh=[]
 		self.rho=[]
@@ -48,4 +56,4 @@ class robot:
 
 
 	def SetEffectorPosition(self,xf):
-		return self.IK.IterJInv(xf)
+		return self.iterIK(xf)
